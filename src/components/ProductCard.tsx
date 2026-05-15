@@ -35,9 +35,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         ? `/products/${category.slug}/${product.id}`
         : `/products/${product.id}`;
 
+    const handleWhatsApp = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(
+            `https://wa.me/971568978100?text=I'm interested in ${product.name} (${product.code})`,
+            '_blank',
+            'noopener,noreferrer'
+        );
+    };
+
     return (
         <Card padding="none" hover className="overflow-hidden group">
-            <Link href={productUrl}>
+            <Link href={productUrl} className="block">
                 <div className="relative aspect-square overflow-hidden bg-neutral-100">
                     <Image
                         src={product.images[0] || '/placeholder.jpg'}
@@ -52,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         </div>
                     )}
                 </div>
-                <div className="p-4">
+                <div className="p-4 pb-2">
                     <div className="mb-2">
                         <p className="text-xs text-neutral-500 mb-1">{product.code}</p>
                         <h3 className="font-semibold text-neutral-900 line-clamp-2 mb-1">
@@ -63,39 +73,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         )}
                     </div>
                     {product.shortDescription && (
-                        <p className="text-sm text-neutral-600 line-clamp-2 mb-4">
+                        <p className="text-sm text-neutral-600 line-clamp-2">
                             {product.shortDescription}
                         </p>
                     )}
-                    <div className="flex gap-2">
-                        <a
-                            href={`https://wa.me/971568978100?text=I'm interested in ${product.name} (${product.code})`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full border-green-600 text-green-700 hover:bg-green-50"
-                            >
-                                <MessageCircle className="w-4 h-4 mr-1" />
-                                WhatsApp
-                            </Button>
-                        </a>
-                        <Button
-                            variant="primary"
-                            size="sm"
-                            className="flex-1"
-                            onClick={handleAddToQuote}
-                        >
-                            <ShoppingCart className="w-4 h-4 mr-1" />
-                            Add to Quote
-                        </Button>
-                    </div>
                 </div>
             </Link>
+            <div className="flex gap-2 px-4 pb-4">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-green-600 text-green-700 hover:bg-green-50"
+                    onClick={handleWhatsApp}
+                >
+                    <MessageCircle className="w-4 h-4 mr-1" />
+                    WhatsApp
+                </Button>
+                <Button
+                    variant="primary"
+                    size="sm"
+                    className="flex-1"
+                    onClick={handleAddToQuote}
+                >
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    Add to Quote
+                </Button>
+            </div>
         </Card>
     );
 };
