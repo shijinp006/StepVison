@@ -1,0 +1,548 @@
+[
+    {
+        "id": "prod-1",
+        "name": "Premium Porcelain Dinner Plate",
+        "code": "TD-DW-001",
+        "categoryId": "cat-1",
+        "subcategoryId": "sub-1-1",
+        "brand": "Royal Doulton",
+        "shortDescription": "Elegant white porcelain dinner plate, 10.5 inches, chip-resistant",
+        "images": [
+            "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-2",
+        "name": "Crystal Wine Glass Set",
+        "code": "TD-GL-002",
+        "categoryId": "cat-1",
+        "subcategoryId": "sub-1-2",
+        "brand": "Schott Zwiesel",
+        "shortDescription": "Lead-free crystal wine glasses, 350ml capacity, set of 6",
+        "images": [
+            "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-3",
+        "name": "Stainless Steel Cutlery Set",
+        "code": "TD-CT-003",
+        "categoryId": "cat-1",
+        "subcategoryId": "sub-1-3",
+        "brand": "Oneida",
+        "shortDescription": "18/10 stainless steel, mirror finish, 20-piece set",
+        "images": [
+            "/images/products/Stainless steel cutlery.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-4",
+        "name": "Professional Chef's Knife",
+        "code": "KC-KT-004",
+        "categoryId": "cat-2",
+        "subcategoryId": "sub-2-3",
+        "brand": "Wüsthof",
+        "shortDescription": "8-inch forged high-carbon stainless steel blade",
+        "images": [
+            "https://images.unsplash.com/photo-1593618998160-e34014e67546?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-5",
+        "name": "Non-Stick Cookware Set",
+        "code": "KC-CW-005",
+        "categoryId": "cat-2",
+        "subcategoryId": "sub-2-1",
+        "brand": "Tefal",
+        "shortDescription": "10-piece aluminum non-stick cookware with glass lids",
+        "images": [
+            "/images/products/Non-Stick Cookware Set.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-6",
+        "name": "Food Storage Container Set",
+        "code": "KC-FS-006",
+        "categoryId": "cat-2",
+        "subcategoryId": "sub-2-2",
+        "brand": "Rubbermaid",
+        "shortDescription": "BPA-free plastic containers with airtight lids, 12-piece",
+        "images": [
+            "/images/products/food storage container set.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-7",
+        "name": "Multi-Purpose Cleaning Solution",
+        "code": "HC-CC-007",
+        "categoryId": "cat-3",
+        "subcategoryId": "sub-3-1",
+        "brand": "Diversey",
+        "shortDescription": "Eco-friendly all-purpose cleaner, 5L concentrate",
+        "images": [
+            "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-8",
+        "name": "Industrial Vacuum Cleaner",
+        "code": "HC-CE-008",
+        "categoryId": "cat-3",
+        "subcategoryId": "sub-3-2",
+        "brand": "Kärcher",
+        "shortDescription": "Wet & dry vacuum, 30L capacity, HEPA filtration",
+        "images": [
+            "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-9",
+        "name": "Housekeeping Trolley",
+        "code": "HC-TC-009",
+        "categoryId": "cat-3",
+        "subcategoryId": "sub-3-3",
+        "brand": "Rubbermaid",
+        "shortDescription": "Heavy-duty plastic trolley with 3 shelves and linen bag",
+        "images": [
+            "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-10",
+        "name": "Luxury Bath Amenity Set",
+        "code": "GR-BA-010",
+        "categoryId": "cat-4",
+        "subcategoryId": "sub-4-1",
+        "brand": "Molton Brown",
+        "shortDescription": "Premium shampoo, conditioner, body wash, lotion - 30ml each",
+        "images": [
+            "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-11",
+        "name": "Egyptian Cotton Towel Set",
+        "code": "GR-LT-011",
+        "categoryId": "cat-4",
+        "subcategoryId": "sub-4-2",
+        "brand": "Sheridan",
+        "shortDescription": "600 GSM Egyptian cotton, bath towel, hand towel, face towel",
+        "images": [
+            "/images/products/Egyptian cotton towels.png"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-12",
+        "name": "Room Service Tray",
+        "code": "GR-RA-012",
+        "categoryId": "cat-4",
+        "subcategoryId": "sub-4-3",
+        "brand": "Cambro",
+        "shortDescription": "Non-slip fiberglass tray, 18x14 inches, dishwasher safe",
+        "images": [
+            "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-13",
+        "name": "Key Card Holder",
+        "code": "FO-RS-013",
+        "categoryId": "cat-5",
+        "subcategoryId": "sub-5-1",
+        "brand": "Custom",
+        "shortDescription": "Leather key card holder with hotel branding option",
+        "images": [
+            "https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-14",
+        "name": "Digital Signage Display",
+        "code": "FO-SD-014",
+        "categoryId": "cat-5",
+        "subcategoryId": "sub-5-2",
+        "brand": "Samsung",
+        "shortDescription": "43-inch LED display for lobby information and promotions",
+        "images": [
+            "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-15",
+        "name": "Stainless Steel Service Tray",
+        "code": "FO-ST-015",
+        "categoryId": "cat-5",
+        "subcategoryId": "sub-5-3",
+        "brand": "Vollrath",
+        "shortDescription": "Round service tray, 14-inch diameter, mirror finish",
+        "images": [
+            "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-16",
+        "name": "Professional Tool Set",
+        "code": "EN-TE-016",
+        "categoryId": "cat-6",
+        "subcategoryId": "sub-6-1",
+        "brand": "Stanley",
+        "shortDescription": "65-piece mechanics tool set with carrying case",
+        "images": [
+            "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-17",
+        "name": "Safety Equipment Kit",
+        "code": "EN-SS-017",
+        "categoryId": "cat-6",
+        "subcategoryId": "sub-6-2",
+        "brand": "3M",
+        "shortDescription": "Complete safety kit: hard hat, goggles, gloves, vest",
+        "images": [
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-18",
+        "name": "Premium Notebook Set",
+        "code": "ST-OS-018",
+        "categoryId": "cat-7",
+        "subcategoryId": "sub-7-1",
+        "brand": "Moleskine",
+        "shortDescription": "A5 hardcover notebooks, ruled, set of 3",
+        "images": [
+            "https://images.unsplash.com/photo-1517842645767-c639042777db?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-19",
+        "name": "Guest Welcome Kit",
+        "code": "ST-GS-019",
+        "categoryId": "cat-7",
+        "subcategoryId": "sub-7-2",
+        "brand": "Custom",
+        "shortDescription": "Branded notepad, pen, and envelope in presentation folder",
+        "images": [
+            "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-20",
+        "name": "Luxury Gift Hamper",
+        "code": "GI-WG-020",
+        "categoryId": "cat-8",
+        "subcategoryId": "sub-8-1",
+        "brand": "Custom",
+        "shortDescription": "Curated welcome hamper with local treats and amenities",
+        "images": [
+            "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=800"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-21",
+        "name": "Corporate Gift Box",
+        "code": "GI-CG-021",
+        "categoryId": "cat-8",
+        "subcategoryId": "sub-8-2",
+        "brand": "Custom",
+        "shortDescription": "Premium corporate gift box with customization options",
+        "images": [
+            "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-22",
+        "name": "LED String Lights",
+        "code": "PI-DC-022",
+        "categoryId": "cat-9",
+        "subcategoryId": "sub-9-1",
+        "brand": "Philips",
+        "shortDescription": "Warm white LED string lights, 10m, waterproof",
+        "images": [
+            "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-23",
+        "name": "Biodegradable Party Plates",
+        "code": "PI-DT-023",
+        "categoryId": "cat-9",
+        "subcategoryId": "sub-9-2",
+        "brand": "Eco-Products",
+        "shortDescription": "Compostable sugarcane plates, 9-inch, pack of 50",
+        "images": [
+            "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-24",
+        "name": "Executive Desk Chair",
+        "code": "FU-GR-024",
+        "categoryId": "cat-10",
+        "subcategoryId": "sub-10-1",
+        "brand": "Herman Miller",
+        "shortDescription": "Ergonomic office chair with lumbar support, black leather",
+        "images": [
+            "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-25",
+        "name": "Lobby Sofa Set",
+        "code": "FU-LF-025",
+        "categoryId": "cat-10",
+        "subcategoryId": "sub-10-2",
+        "brand": "Custom",
+        "shortDescription": "3-seater sofa with matching armchairs, premium fabric",
+        "images": [
+            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-26",
+        "name": "Outdoor Dining Set",
+        "code": "FU-OF-026",
+        "categoryId": "cat-10",
+        "subcategoryId": "sub-10-3",
+        "brand": "Kettler",
+        "shortDescription": "Weather-resistant table and 6 chairs, aluminum frame",
+        "images": [
+            "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-27",
+        "name": "Premium Upholstery Fabric",
+        "code": "UP-FB-027",
+        "categoryId": "cat-11",
+        "subcategoryId": "sub-11-1",
+        "brand": "Sunbrella",
+        "shortDescription": "Stain-resistant performance fabric, multiple colors available",
+        "images": [
+            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-28",
+        "name": "Decorative Cushion Set",
+        "code": "UP-CP-028",
+        "categoryId": "cat-11",
+        "subcategoryId": "sub-11-2",
+        "brand": "Custom",
+        "shortDescription": "Luxury cushions with removable covers, set of 4",
+        "images": [
+            "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-29",
+        "name": "Branded Hotel Slippers",
+        "code": "CS-BI-029",
+        "categoryId": "cat-12",
+        "subcategoryId": "sub-12-1",
+        "brand": "Custom",
+        "shortDescription": "Custom embroidered hotel slippers, minimum order 500 pairs",
+        "images": [
+            "/images/products/branded hotel slipper.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-30",
+        "name": "Bulk Linen Package",
+        "code": "CS-BO-030",
+        "categoryId": "cat-12",
+        "subcategoryId": "sub-12-2",
+        "brand": "Various",
+        "shortDescription": "Complete linen package for 50-room hotel, customizable",
+        "images": [
+            "https://images.unsplash.com/photo-1631889993959-41b4e9c6e3c5?w=800"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-001",
+        "name": "Industrial HVAC Air Filter",
+        "code": "ES-HV-001",
+        "categoryId": "cat-6",
+        "subcategoryId": "hvac-parts-filters",
+        "brand": "Honeywell",
+        "shortDescription": "MERV 13 pleated air filter, 24x24x2 inches, pack of 12",
+        "images": [
+            "/images/products/hvac_air_filter.png"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-002",
+        "name": "Heavy Duty AC Compressor",
+        "code": "ES-HV-002",
+        "categoryId": "cat-6",
+        "subcategoryId": "hvac-parts-filters",
+        "brand": "Copeland",
+        "shortDescription": "Scroll compressor for commercial HVAC systems, 5 ton",
+        "images": [
+            "/images/products/ac_compressor.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-003",
+        "name": "LED Panel Light 60x60",
+        "code": "ES-EL-003",
+        "categoryId": "cat-6",
+        "subcategoryId": "electrical-lighting",
+        "brand": "Philips",
+        "shortDescription": "40W LED panel light, 4000K natural white, energy efficient",
+        "images": [
+            "/images/products/led_panel_light.png"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-004",
+        "name": "Commercial Circuit Breaker",
+        "code": "ES-EL-004",
+        "categoryId": "cat-6",
+        "subcategoryId": "electrical-lighting",
+        "brand": "Schneider Electric",
+        "shortDescription": "3-pole miniature circuit breaker, 32A, C-curve",
+        "images": [
+            "/images/products/circuit_breaker.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-005",
+        "name": "Brass Ball Valve",
+        "code": "ES-PM-005",
+        "categoryId": "cat-6",
+        "subcategoryId": "plumbing-mechanical",
+        "brand": "Nibco",
+        "shortDescription": "Full port threaded brass ball valve, 2 inch",
+        "images": [
+            "/images/products/brass_ball_valve.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-006",
+        "name": "Water Circulation Pump",
+        "code": "ES-PM-006",
+        "categoryId": "cat-6",
+        "subcategoryId": "pumps-motors",
+        "brand": "Grundfos",
+        "shortDescription": "High-efficiency circulator pump for hot water systems",
+        "images": [
+            "/images/products/water_circulation_pump.png"
+        ],
+        "isFeatured": true,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-007",
+        "name": "Three-Phase Electric Motor",
+        "code": "ES-PM-007",
+        "categoryId": "cat-6",
+        "subcategoryId": "pumps-motors",
+        "brand": "ABB",
+        "shortDescription": "5HP induction motor, 1450 RPM, cast iron frame",
+        "images": [
+            "/images/products/electric_motor.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-008",
+        "name": "Synthetic Motor Oil 5W-30",
+        "code": "ES-MC-008",
+        "categoryId": "cat-6",
+        "subcategoryId": "maintenance-consumables",
+        "brand": "Generic",
+        "shortDescription": "Fully synthetic engine oil for maintenance, 5L pack",
+        "images": [
+            "/images/products/motor_oil.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    },
+    {
+        "id": "prod-es-009",
+        "name": "Multi-Purpose Grease",
+        "code": "ES-MC-009",
+        "categoryId": "cat-6",
+        "subcategoryId": "maintenance-consumables",
+        "brand": "SKF",
+        "shortDescription": "Lithium-based grease for bearings and general lubrication",
+        "images": [
+            "/images/products/multi_purpose_grease.png"
+        ],
+        "isFeatured": false,
+        "status": "active"
+    }
+]

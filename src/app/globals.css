@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+
+  /* Global scale reduction - 20% smaller */
+  html {
+    font-size: 14px;
+    /* Reduced from default 16px */
+  }
+
+  body {
+    @apply text-neutral-900;
+  }
+
+  /* Tighter container spacing */
+  .container {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+}

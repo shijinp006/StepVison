@@ -1,0 +1,288 @@
+[
+    {
+        "id": "cat-1",
+        "name": "Tabletop & Dining",
+        "slug": "tabletop-dining",
+        "description": "Complete range of tabletop essentials for elegant dining experiences",
+        "subcategories": [
+            {
+                "id": "sub-1-1",
+                "name": "Dinnerware",
+                "slug": "dinnerware"
+            },
+            {
+                "id": "sub-1-2",
+                "name": "Glassware",
+                "slug": "glassware"
+            },
+            {
+                "id": "sub-1-3",
+                "name": "Cutlery & Flatware",
+                "slug": "cutlery-flatware"
+            }
+        ]
+    },
+    {
+        "id": "cat-2",
+        "name": "Kitchen & Catering",
+        "slug": "kitchen-catering",
+        "description": "Professional kitchen equipment and catering supplies",
+        "subcategories": [
+            {
+                "id": "sub-2-1",
+                "name": "Cookware",
+                "slug": "cookware"
+            },
+            {
+                "id": "sub-2-2",
+                "name": "Food Storage",
+                "slug": "food-storage"
+            },
+            {
+                "id": "sub-2-3",
+                "name": "Kitchen Tools",
+                "slug": "kitchen-tools"
+            }
+        ]
+    },
+    {
+        "id": "cat-3",
+        "name": "Housekeeping & Cleaning",
+        "slug": "housekeeping-cleaning",
+        "description": "Comprehensive cleaning and housekeeping solutions",
+        "subcategories": [
+            {
+                "id": "sub-3-1",
+                "name": "Cleaning Chemicals",
+                "slug": "cleaning-chemicals"
+            },
+            {
+                "id": "sub-3-2",
+                "name": "Cleaning Equipment",
+                "slug": "cleaning-equipment"
+            },
+            {
+                "id": "sub-3-3",
+                "name": "Trolleys & Carts",
+                "slug": "trolleys-carts"
+            }
+        ]
+    },
+    {
+        "id": "cat-4",
+        "name": "Guest Room Essentials",
+        "slug": "guest-room-essentials",
+        "description": "Premium amenities and essentials for guest comfort",
+        "subcategories": [
+            {
+                "id": "sub-4-1",
+                "name": "Bathroom Amenities",
+                "slug": "bathroom-amenities"
+            },
+            {
+                "id": "sub-4-2",
+                "name": "Linens & Towels",
+                "slug": "linens-towels"
+            },
+            {
+                "id": "sub-4-3",
+                "name": "Room Accessories",
+                "slug": "room-accessories"
+            }
+        ]
+    },
+    {
+        "id": "cat-5",
+        "name": "Front Office & Service",
+        "slug": "front-office-service",
+        "description": "Professional front office and guest service supplies",
+        "subcategories": [
+            {
+                "id": "sub-5-1",
+                "name": "Reception Supplies",
+                "slug": "reception-supplies"
+            },
+            {
+                "id": "sub-5-2",
+                "name": "Signage & Displays",
+                "slug": "signage-displays"
+            },
+            {
+                "id": "sub-5-3",
+                "name": "Service Trays",
+                "slug": "service-trays"
+            }
+        ]
+    },
+    {
+        "id": "cat-6",
+        "name": "Engineering Solutions",
+        "slug": "engineering-solutions",
+        "description": "Comprehensive engineering solutions including HVAC, electrical, plumbing, and maintenance supplies",
+        "subcategories": [
+            {
+                "id": "hvac-parts-filters",
+                "name": "HVAC parts & filters",
+                "slug": "hvac-parts-filters"
+            },
+            {
+                "id": "electrical-lighting",
+                "name": "Electrical & lighting systems",
+                "slug": "electrical-lighting"
+            },
+            {
+                "id": "plumbing-mechanical",
+                "name": "Plumbing & mechanical components",
+                "slug": "plumbing-mechanical"
+            },
+             {
+                "id": "pumps-motors",
+                "name": "Pumps, motors & spare parts",
+                "slug": "pumps-motors"
+            },
+            {
+                "id": "maintenance-consumables",
+                "name": "Preventive maintenance consumables",
+                "slug": "maintenance-consumables"
+            }
+        ]
+    },
+    {
+        "id": "cat-7",
+        "name": "Stationery",
+        "slug": "stationery",
+        "description": "Office and guest stationery supplies",
+        "subcategories": [
+            {
+                "id": "sub-7-1",
+                "name": "Office Supplies",
+                "slug": "office-supplies"
+            },
+            {
+                "id": "sub-7-2",
+                "name": "Guest Stationery",
+                "slug": "guest-stationery"
+            },
+            {
+                "id": "sub-7-3",
+                "name": "Printing Materials",
+                "slug": "printing-materials"
+            }
+        ]
+    },
+    {
+        "id": "cat-8",
+        "name": "Gift Items",
+        "slug": "gift-items",
+        "description": "Curated gift items for guests and special occasions",
+        "subcategories": [
+            {
+                "id": "sub-8-1",
+                "name": "Welcome Gifts",
+                "slug": "welcome-gifts"
+            },
+            {
+                "id": "sub-8-2",
+                "name": "Corporate Gifts",
+                "slug": "corporate-gifts"
+            },
+            {
+                "id": "sub-8-3",
+                "name": "Seasonal Items",
+                "slug": "seasonal-items"
+            }
+        ]
+    },
+    {
+        "id": "cat-9",
+        "name": "Party Items",
+        "slug": "party-items",
+        "description": "Event and party supplies for special occasions",
+        "subcategories": [
+            {
+                "id": "sub-9-1",
+                "name": "Decorations",
+                "slug": "decorations"
+            },
+            {
+                "id": "sub-9-2",
+                "name": "Disposable Tableware",
+                "slug": "disposable-tableware"
+            },
+            {
+                "id": "sub-9-3",
+                "name": "Event Accessories",
+                "slug": "event-accessories"
+            }
+        ]
+    },
+    {
+        "id": "cat-10",
+        "name": "Furniture",
+        "slug": "furniture",
+        "description": "Quality furniture for all hotel areas",
+        "subcategories": [
+            {
+                "id": "sub-10-1",
+                "name": "Guest Room Furniture",
+                "slug": "guest-room-furniture"
+            },
+            {
+                "id": "sub-10-2",
+                "name": "Lobby Furniture",
+                "slug": "lobby-furniture"
+            },
+            {
+                "id": "sub-10-3",
+                "name": "Outdoor Furniture",
+                "slug": "outdoor-furniture"
+            }
+        ]
+    },
+    {
+        "id": "cat-11",
+        "name": "Upholstery",
+        "slug": "upholstery",
+        "description": "Premium upholstery materials and services",
+        "subcategories": [
+            {
+                "id": "sub-11-1",
+                "name": "Fabrics",
+                "slug": "fabrics"
+            },
+            {
+                "id": "sub-11-2",
+                "name": "Cushions & Pillows",
+                "slug": "cushions-pillows"
+            },
+            {
+                "id": "sub-11-3",
+                "name": "Custom Upholstery",
+                "slug": "custom-upholstery"
+            }
+        ]
+    },
+    {
+        "id": "cat-12",
+        "name": "Custom & Project Solutions",
+        "slug": "custom-project-solutions",
+        "description": "Tailored solutions for hotel projects and special requirements",
+        "subcategories": [
+            {
+                "id": "sub-12-1",
+                "name": "Branded Items",
+                "slug": "branded-items"
+            },
+            {
+                "id": "sub-12-2",
+                "name": "Bulk Orders",
+                "slug": "bulk-orders"
+            },
+            {
+                "id": "sub-12-3",
+                "name": "Project Consulting",
+                "slug": "project-consulting"
+            }
+        ]
+    }
+]
