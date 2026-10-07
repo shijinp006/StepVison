@@ -13,10 +13,12 @@ const ALLOWED_TYPES = {
     'image/gif': '.gif',
 };
 
-fs.mkdirSync(PRODUCT_UPLOADS_DIR, { recursive: true });
-
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, PRODUCT_UPLOADS_DIR),
+    // Created on first upload rather than at startup: on a read-only
+    // filesystem (Vercel) only uploads should fail, not the whole server.
+    destination: (req, file, cb) => {
+        fs.promises.mkdir(PRODUCT_UPLOADS_DIR, { recursive: true }).then(() => cb(null, PRODUCT_UPLOADS_DIR), cb);
+    },
     // Random name with an extension derived from the mime type, never from the
     // client-supplied filename.
     filename: (req, file, cb) => {
