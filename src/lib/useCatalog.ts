@@ -10,7 +10,6 @@ import {
     fetchProducts,
     isCancelledRequest,
 } from './catalog';
-import { log } from 'console';
 
 // Loads every category once per page view.
 export function useCategories() {
