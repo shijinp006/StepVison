@@ -1,7 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { env } from './config/env.js';
+import { env, configErrors } from './config/env.js';
 import { connectDB } from './config/db.js';
 import { UPLOADS_DIR } from './config/paths.js';
 import { ensureAdmin } from './utils/ensureAdmin.js';
@@ -23,12 +23,27 @@ app.use(cookieParser());
 
 app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d', index: false }));
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+// Reports setup problems (names only, never values) so a broken deployment
+// can be diagnosed from the browser.
+app.get('/api/health', async (req, res) => {
+    if (configErrors.length > 0) {
+        return res.status(500).json({ status: 'error', problems: configErrors });
+    }
+    try {
+        await whenReady();
+        res.json({ status: 'ok', database: 'connected' });
+    } catch (err) {
+        res.status(500).json({ status: 'error', problems: [`Database: ${err.message}`] });
+    }
+});
 
 // Connect to MongoDB and seed once, on the first request that needs it. On
 // Vercel each cold start runs this again; a failure is retried next request.
 let ready;
 function whenReady() {
+    if (configErrors.length > 0) {
+        return Promise.reject(new Error(configErrors.join(' ')));
+    }
     ready ??= (async () => {
         await connectDB();
         await ensureAdmin();
