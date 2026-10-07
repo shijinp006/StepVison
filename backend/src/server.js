@@ -24,6 +24,26 @@ app.use(cookieParser());
 app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d', index: false }));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
+// Connect to MongoDB and seed once, on the first request that needs it. On
+// Vercel each cold start runs this again; a failure is retried next request.
+let ready;
+function whenReady() {
+    ready ??= (async () => {
+        await connectDB();
+        await ensureAdmin();
+        await refreshCategoryCache();
+    })().catch((err) => {
+        ready = undefined;
+        throw err;
+    });
+    return ready;
+}
+
+app.use('/api', (req, res, next) => {
+    whenReady().then(() => next(), next);
+});
+
 app.use('/api/catalog', catalogRoutes);
 app.use('/api/admin/auth', authRoutes);
 app.use('/api/admin/products', productRoutes);
@@ -32,12 +52,16 @@ app.use('/api/admin/categories', categoryRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-try {
-    await connectDB();
-    await ensureAdmin();
-    await refreshCategoryCache();
-    app.listen(env.port, () => console.log(`Admin API running on http://localhost:${env.port}`));
-} catch (err) {
-    console.error('Failed to start server:', err.message);
-    process.exit(1);
+// Vercel runs the exported app itself; locally we start a server and fail
+// fast if MongoDB is unreachable.
+if (!process.env.VERCEL) {
+    try {
+        await whenReady();
+        app.listen(env.port, () => console.log(`Admin API running on http://localhost:${env.port}`));
+    } catch (err) {
+        console.error('Failed to start server:', err.message);
+        process.exit(1);
+    }
 }
+
+export default app;
