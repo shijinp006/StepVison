@@ -3,6 +3,10 @@ import { Breadcrumb } from '@/components/Breadcrumb';
 import { CategoryCard } from '@/components/CategoryCard';
 import { fetchCategories } from '@/lib/catalog';
 
+// Catalog data changes from the admin panel, so render on each request
+// instead of once at build time (when the backend may not be reachable).
+export const dynamic = 'force-dynamic';
+
 export default async function HospitalitySuppliesPage() {
     // Filter out Engineering Solutions as it has its own section
     const categories = (await fetchCategories()).filter(cat => cat.slug !== 'engineering-solutions');

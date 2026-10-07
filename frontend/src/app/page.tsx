@@ -8,6 +8,10 @@ import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
 import { fetchCategories, fetchProducts } from '@/lib/catalog';
 
+// Catalog data changes from the admin panel, so render on each request
+// instead of once at build time (when the backend may not be reachable).
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const [categories, { products: featuredProducts }] = await Promise.all([
     fetchCategories(),
