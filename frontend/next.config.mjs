@@ -1,11 +1,25 @@
-// Set in .env.local (see .env.local.example).
-const backendUrl = process.env.BACKEND_URL;
-if (!backendUrl) {
-    throw new Error('BACKEND_URL is not set. Add it to .env.local, e.g. BACKEND_URL=http://localhost:5000');
+// Set in .env.local (see .env.local.example). Accepts a bare host like
+// "my-api.vercel.app" (https is assumed) and ignores a trailing slash.
+function readBackendUrl() {
+    const raw = process.env.BACKEND_URL?.trim();
+    if (!raw) {
+        throw new Error('BACKEND_URL is not set. Add it to .env.local, e.g. BACKEND_URL=http://localhost:5000');
+    }
+
+    const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    try {
+        return new URL(withProtocol).href.replace(/\/+$/, '');
+    } catch {
+        throw new Error(`BACKEND_URL is not a valid URL: "${raw}"`);
+    }
 }
+
+const backendUrl = readBackendUrl();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // Hand the cleaned-up URL to the app so server-side fetches use it too.
+    env: { BACKEND_URL: backendUrl },
     images: {
         unoptimized: true,
         remotePatterns: [

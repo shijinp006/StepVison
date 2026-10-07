@@ -23,8 +23,8 @@ export interface CatalogProductQuery {
     limit?: number;
 }
 
-// The server calls the backend directly (BACKEND_URL from .env.local); the
-// browser goes through the /api/catalog rewrite in next.config.mjs.
+// The server calls the backend directly (BACKEND_URL, cleaned up in
+// next.config.mjs); the browser goes through the /api/catalog rewrite.
 const baseUrl = typeof window === 'undefined' ? process.env.BACKEND_URL : '';
 
 export class CatalogError extends Error {
