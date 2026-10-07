@@ -67,16 +67,17 @@ app.use('/api/admin/categories', categoryRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-// Vercel runs the exported app itself; locally we start a server and fail
-// fast if MongoDB is unreachable.
+// Vercel runs the exported app itself; elsewhere we start a server. Locally we
+// fail fast if setup is broken; on Render we keep serving so /api/health can
+// report the problem and later requests retry the connection.
 if (!process.env.VERCEL) {
     try {
         await whenReady();
-        app.listen(env.port, () => console.log(`Admin API running on http://localhost:${env.port}`));
     } catch (err) {
         console.error('Failed to start server:', err.message);
-        process.exit(1);
+        if (!process.env.RENDER) process.exit(1);
     }
+    app.listen(env.port, () => console.log(`Admin API listening on port ${env.port}`));
 }
 
 export default app;

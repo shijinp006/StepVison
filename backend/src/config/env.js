@@ -1,7 +1,7 @@
 const required = ['MONGODB_URI', 'ADMIN_EMAIL', 'ADMIN_PASSWORD', 'JWT_SECRET'];
 
-// Problems with the environment. Locally we stop right away; on Vercel the
-// server keeps running so /api/health can report them (see server.js).
+// Problems with the environment. Locally we stop right away; on Vercel and
+// Render the server keeps running so /api/health can report them (see server.js).
 export const configErrors = [];
 
 const missing = required.filter((key) => !process.env[key]);
@@ -38,7 +38,7 @@ export const env = {
 };
 
 for (const message of configErrors) console.error(message);
-if (configErrors.length > 0 && !process.env.VERCEL) {
+if (configErrors.length > 0 && !process.env.VERCEL && !process.env.RENDER) {
     console.error('Copy backend/.env.example to backend/.env and fill in the values.');
     process.exit(1);
 }
