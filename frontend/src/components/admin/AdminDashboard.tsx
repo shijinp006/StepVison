@@ -14,7 +14,6 @@ import {
     Wallet,
     AlertTriangle,
     Loader2,
-    Smartphone,
     ExternalLink,
     ChevronLeft,
     ChevronRight,
@@ -243,14 +242,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ session, onLogge
                     </div>
 
                     <div className="flex items-center gap-3 lg:gap-5">
-                        <div
-                            className="hidden md:flex items-center gap-2 text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-1.5"
-                            title={`Device ID: ${session.deviceId}`}
-                        >
-                            <Smartphone className="w-3.5 h-3.5 text-primary-500" />
-                            <span>Device</span>
-                            <code className="text-neutral-200 font-mono">{session.deviceId.slice(0, 8)}</code>
-                        </div>
                         <span className="hidden lg:block text-sm text-neutral-300 truncate max-w-[220px]">{session.admin.email}</span>
                         <Link
                             href="/"

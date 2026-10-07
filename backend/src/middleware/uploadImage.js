@@ -4,33 +4,17 @@ import crypto from 'node:crypto';
 import multer from 'multer';
 import { PRODUCT_UPLOADS_DIR } from '../config/paths.js';
 import { HttpError } from '../utils/HttpError.js';
+import { convertToWebp } from '../utils/webp.js';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_TYPES = {
-    'image/jpeg': '.jpg',
-    'image/png': '.png',
-    'image/webp': '.webp',
-    'image/gif': '.gif',
-};
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-const storage = multer.diskStorage({
-    // Created on first upload rather than at startup: on a read-only
-    // filesystem (Vercel) only uploads should fail, not the whole server.
-    destination: (req, file, cb) => {
-        fs.promises.mkdir(PRODUCT_UPLOADS_DIR, { recursive: true }).then(() => cb(null, PRODUCT_UPLOADS_DIR), cb);
-    },
-    // Random name with an extension derived from the mime type, never from the
-    // client-supplied filename.
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ALLOWED_TYPES[file.mimetype]}`);
-    },
-});
-
+// Kept in memory so it can be converted to WebP before anything is written.
 const upload = multer({
-    storage,
+    storage: multer.memoryStorage(),
     limits: { fileSize: MAX_FILE_SIZE, files: 1 },
     fileFilter: (req, file, cb) => {
-        if (ALLOWED_TYPES[file.mimetype]) return cb(null, true);
+        if (ALLOWED_TYPES.includes(file.mimetype)) return cb(null, true);
         cb(new HttpError(400, 'Only JPG, PNG, WEBP or GIF images are allowed'));
     },
 });
@@ -41,15 +25,35 @@ const errorMessages = {
     LIMIT_FILE_COUNT: 'Only one image can be uploaded',
 };
 
+// Saves the uploaded image as WebP under a random name (never the
+// client-supplied one) and sets req.file.filename for the controller.
+async function saveAsWebp(file) {
+    // Created on first upload rather than at startup: on a read-only
+    // filesystem (Vercel) only uploads should fail, not the whole server.
+    await fs.promises.mkdir(PRODUCT_UPLOADS_DIR, { recursive: true });
+
+    const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}.webp`;
+    try {
+        await convertToWebp(file.buffer, path.join(PRODUCT_UPLOADS_DIR, filename));
+    } catch {
+        throw new HttpError(400, 'The image could not be read. Try a different file');
+    }
+
+    file.filename = filename;
+    file.buffer = undefined;
+}
+
 // Wraps multer so upload problems come back as a 400 JSON response
 // instead of falling through to the generic error handler.
 export function uploadProductImage(req, res, next) {
     upload.single('image')(req, res, (err) => {
-        if (!err) return next();
         if (err instanceof multer.MulterError) {
             return res.status(400).json({ message: errorMessages[err.code] || err.message });
         }
-        next(err);
+        if (err) return next(err);
+        if (!req.file) return next();
+
+        saveAsWebp(req.file).then(() => next(), next);
     });
 }
 
