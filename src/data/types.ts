@@ -16,17 +16,18 @@ export interface Category {
   subcategories?: Subcategory[];
 }
 
+// Active products as served by the backend's /api/catalog/products.
 export interface Product {
   id: string;
   name: string;
   code: string;
   categoryId: string;
+  categorySlug?: string;
   subcategoryId?: string;
   brand?: string;
   shortDescription?: string;
   images: string[];
   isFeatured: boolean;
-  status: 'active' | 'archived';
 }
 
 export interface CartItem {

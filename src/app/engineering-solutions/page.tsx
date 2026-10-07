@@ -1,32 +1,33 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/Button';
-import { getCategoryBySlug, getProductsByCategoryId, getProductsBySubcategoryId } from '@/data/helpers';
+import { CatalogStatus } from '@/components/CatalogStatus';
+import { useCatalogProducts, useCategories } from '@/lib/useCatalog';
 
 const PRODUCTS_PER_PAGE = 12;
 
 export default function EngineeringSolutionsPage() {
     // Hardcoded category slug for this page
     const categorySlug = 'engineering-solutions';
-    const category = getCategoryBySlug(categorySlug);
+    const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+    const category = categories.find((cat) => cat.slug === categorySlug);
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Get products - safely handle missing category
-    const allCategoryProducts = useMemo(() =>
-        category ? getProductsByCategoryId(category.id) : [],
-        [category]
+    // The backend filters by category and subcategory and pages the results;
+    // it waits until the category is known.
+    const { products, pagination, error: productsError } = useCatalogProducts(
+        category
+            ? { category: category.id, subcategory: selectedSubcategory, page: currentPage, limit: PRODUCTS_PER_PAGE }
+            : null
     );
 
-    const filteredProducts = useMemo(() => {
-        if (selectedSubcategory) {
-            return getProductsBySubcategoryId(selectedSubcategory);
-        }
-        return allCategoryProducts;
-    }, [selectedSubcategory, allCategoryProducts]);
+    if (categoriesLoading || categoriesError) {
+        return <CatalogStatus error={categoriesError} />;
+    }
 
     if (!category) {
         return (
@@ -39,12 +40,13 @@ export default function EngineeringSolutionsPage() {
         );
     }
 
-    // Pagination
-    const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-    const paginatedProducts = filteredProducts.slice(
-        (currentPage - 1) * PRODUCTS_PER_PAGE,
-        currentPage * PRODUCTS_PER_PAGE
-    );
+    if (!products || productsError) {
+        return <CatalogStatus error={productsError} />;
+    }
+
+    const paginatedProducts = products;
+    const totalProducts = pagination?.total ?? 0;
+    const totalPages = pagination?.totalPages ?? 1;
 
     const handleSubcategoryChange = (subcategoryId: string) => {
         setSelectedSubcategory(subcategoryId);
@@ -101,7 +103,7 @@ export default function EngineeringSolutionsPage() {
                 {/* Results Count */}
                 <div className="mb-6">
                     <p className="text-neutral-600">
-                        Showing {paginatedProducts.length} of {filteredProducts.length} products
+                        Showing {paginatedProducts.length} of {totalProducts} products
                     </p>
                 </div>
 

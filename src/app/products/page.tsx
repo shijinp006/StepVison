@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { Button } from '@/components/Button';
-import { getCategories, getActiveProducts } from '@/data/helpers';
-import { Product } from '@/data/types';
+import { CatalogStatus } from '@/components/CatalogStatus';
+import { useCatalogProducts, useCategories, useDebouncedValue } from '@/lib/useCatalog';
 
 const PRODUCTS_PER_PAGE = 12;
+const SEARCH_DEBOUNCE_MS = 300;
 
 export default function ProductsPage() {
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -18,42 +19,22 @@ export default function ProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-    const categories = getCategories();
-    const allProducts = getActiveProducts();
+    // Search, filters and pagination all run on the backend; the search
+    // waits until typing pauses.
+    const search = useDebouncedValue(searchQuery.trim(), SEARCH_DEBOUNCE_MS);
+    const { categories, error: categoriesError } = useCategories();
+    const { products, pagination, error: productsError } = useCatalogProducts({
+        search,
+        category: selectedCategory,
+        subcategory: selectedSubcategory,
+        page: currentPage,
+        limit: PRODUCTS_PER_PAGE,
+    });
+    const error = categoriesError || productsError;
 
-    // Filter products
-    const filteredProducts = useMemo(() => {
-        let filtered: Product[] = allProducts;
-
-        // Filter by category
-        if (selectedCategory) {
-            filtered = filtered.filter((p) => p.categoryId === selectedCategory);
-        }
-
-        // Filter by subcategory
-        if (selectedSubcategory) {
-            filtered = filtered.filter((p) => p.subcategoryId === selectedSubcategory);
-        }
-
-        // Filter by search query
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(
-                (p) =>
-                    p.name.toLowerCase().includes(query) ||
-                    p.code.toLowerCase().includes(query)
-            );
-        }
-
-        return filtered;
-    }, [allProducts, selectedCategory, selectedSubcategory, searchQuery]);
-
-    // Pagination
-    const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-    const paginatedProducts = filteredProducts.slice(
-        (currentPage - 1) * PRODUCTS_PER_PAGE,
-        currentPage * PRODUCTS_PER_PAGE
-    );
+    const paginatedProducts = products ?? [];
+    const totalProducts = pagination?.total ?? 0;
+    const totalPages = pagination?.totalPages ?? 1;
 
     const handleClearFilters = () => {
         setSelectedCategory('');
@@ -129,61 +110,67 @@ export default function ProductsPage() {
                             </Button>
                         </div>
 
-                        {/* Results Count */}
-                        <div className="mb-6">
-                            <p className="text-neutral-600">
-                                Showing {paginatedProducts.length} of {filteredProducts.length} products
-                            </p>
-                        </div>
-
-                        {/* Product Grid */}
-                        {paginatedProducts.length > 0 ? (
+                        {!products || error ? (
+                            <CatalogStatus error={error} />
+                        ) : (
                             <>
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                                    {paginatedProducts.map((product) => (
-                                        <ProductCard key={product.id} product={product} />
-                                    ))}
+                                {/* Results Count */}
+                                <div className="mb-6">
+                                    <p className="text-neutral-600">
+                                        Showing {paginatedProducts.length} of {totalProducts} products
+                                    </p>
                                 </div>
 
-                                {/* Pagination */}
-                                {totalPages > 1 && (
-                                    <div className="flex justify-center gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                            disabled={currentPage === 1}
-                                        >
-                                            Previous
-                                        </Button>
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                            <Button
-                                                key={page}
-                                                variant={currentPage === page ? 'primary' : 'outline'}
-                                                size="sm"
-                                                onClick={() => setCurrentPage(page)}
-                                            >
-                                                {page}
-                                            </Button>
-                                        ))}
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                                            disabled={currentPage === totalPages}
-                                        >
-                                            Next
+                                {/* Product Grid */}
+                                {paginatedProducts.length > 0 ? (
+                                    <>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                                            {paginatedProducts.map((product) => (
+                                                <ProductCard key={product.id} product={product} />
+                                            ))}
+                                        </div>
+
+                                        {/* Pagination */}
+                                        {totalPages > 1 && (
+                                            <div className="flex justify-center gap-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                                    disabled={currentPage === 1}
+                                                >
+                                                    Previous
+                                                </Button>
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                    <Button
+                                                        key={page}
+                                                        variant={currentPage === page ? 'primary' : 'outline'}
+                                                        size="sm"
+                                                        onClick={() => setCurrentPage(page)}
+                                                    >
+                                                        {page}
+                                                    </Button>
+                                                ))}
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                                    disabled={currentPage === totalPages}
+                                                >
+                                                    Next
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <p className="text-xl text-neutral-600 mb-4">No products found</p>
+                                        <Button variant="outline" size="md" onClick={handleClearFilters}>
+                                            Clear Filters
                                         </Button>
                                     </div>
                                 )}
                             </>
-                        ) : (
-                            <div className="text-center py-12">
-                                <p className="text-xl text-neutral-600 mb-4">No products found</p>
-                                <Button variant="outline" size="md" onClick={handleClearFilters}>
-                                    Clear Filters
-                                </Button>
-                            </div>
                         )}
                     </div>
                 </div>

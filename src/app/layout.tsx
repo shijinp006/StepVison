@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ToastProvider";
 import { FloatingContact } from "@/components/FloatingContact";
+import { SiteShell } from "@/components/layout/SiteShell";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <SiteShell header={<Header />} footer={<Footer />} floating={<FloatingContact />}>
+          {children}
+        </SiteShell>
         <ToastProvider />
-        <FloatingContact />
       </body>
     </html>
   );

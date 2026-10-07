@@ -6,11 +6,13 @@ import { Button } from '@/components/Button';
 import { HeroSlider } from '@/components/HeroSlider';
 import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
-import { getCategories, getFeaturedProducts } from '@/data/helpers';
+import { fetchCategories, fetchProducts } from '@/lib/catalog';
 
-export default function HomePage() {
-  const categories = getCategories();
-  const featuredProducts = getFeaturedProducts().slice(0, 8);
+export default async function HomePage() {
+  const [categories, { products: featuredProducts }] = await Promise.all([
+    fetchCategories(),
+    fetchProducts({ featured: true, limit: 8 }),
+  ]);
 
   return (
     <div className="min-h-screen">
@@ -92,7 +94,7 @@ export default function HomePage() {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto mb-4"></div>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              Browse our comprehensive range of hospitality supplies across 12 specialized categories
+              Browse our comprehensive range of hospitality supplies across {categories.length} specialized categories
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

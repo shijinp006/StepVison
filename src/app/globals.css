@@ -20,3 +20,48 @@
     @apply px-4 md:px-6 lg:px-8;
   }
 }
+
+/* Scrolls normally but shows no scrollbar (used on the admin pages). */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* A slim scrollbar for scrollable panels such as the admin product table. */
+/* Firefox has no ::-webkit-scrollbar, so it gets the standard properties. */
+@supports not selector(::-webkit-scrollbar) {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4 transparent;
+  }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #d4d4d4;
+  border-radius: 9999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #a3a3a3;
+}
+
+/* Smaller text on phones, for the admin pages only. Tailwind sizes are in
+   rem, so the whole admin UI scales down with the root font size. */
+@media (max-width: 639px) {
+  html:has(.admin-root) {
+    font-size: 12px;
+  }
+}

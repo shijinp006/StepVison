@@ -9,7 +9,6 @@ import { Button } from './Button';
 import { Product } from '@/data/types';
 import { useQuoteCart } from '@/store/useQuoteCart';
 import { useToast } from '@/store/useToast';
-import { getCategoryById } from '@/data/helpers';
 
 export interface ProductCardProps {
     product: Product;
@@ -18,7 +17,6 @@ export interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const addItem = useQuoteCart((state) => state.addItem);
     const addToast = useToast((state) => state.addToast);
-    const category = getCategoryById(product.categoryId);
 
     const handleAddToQuote = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -31,8 +29,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         addToast(`${product.name} added to quote cart`, 'success');
     };
 
-    const productUrl = category
-        ? `/products/${category.slug}/${product.id}`
+    const productUrl = product.categorySlug
+        ? `/products/${product.categorySlug}/${product.id}`
         : `/products/${product.id}`;
 
     const handleWhatsApp = (e: React.MouseEvent) => {

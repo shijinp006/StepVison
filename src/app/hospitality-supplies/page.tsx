@@ -1,11 +1,11 @@
 import React from 'react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CategoryCard } from '@/components/CategoryCard';
-import { getCategories } from '@/data/helpers';
+import { fetchCategories } from '@/lib/catalog';
 
-export default function HospitalitySuppliesPage() {
+export default async function HospitalitySuppliesPage() {
     // Filter out Engineering Solutions as it has its own section
-    const categories = getCategories().filter(cat => cat.slug !== 'engineering-solutions');
+    const categories = (await fetchCategories()).filter(cat => cat.slug !== 'engineering-solutions');
 
     return (
         <div className="min-h-screen bg-neutral-50">

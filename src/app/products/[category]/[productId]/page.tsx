@@ -7,7 +7,8 @@ import { ArrowLeft, ShoppingCart, Minus, Plus } from 'lucide-react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { ImageGallery } from '@/components/ImageGallery';
 import { Button } from '@/components/Button';
-import { getProductById, getCategoryById } from '@/data/helpers';
+import { CatalogStatus } from '@/components/CatalogStatus';
+import { useCatalogProduct, useCategories } from '@/lib/useCatalog';
 import { useQuoteCart } from '@/store/useQuoteCart';
 import { useToast } from '@/store/useToast';
 
@@ -22,15 +23,21 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
     const [quantity, setQuantity] = useState(1);
 
-    const product = getProductById(params.productId);
+    const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+    const { product, loading: productLoading, error: productError } = useCatalogProduct(params.productId);
     const addItem = useQuoteCart((state) => state.addItem);
     const addToast = useToast((state) => state.addToast);
+
+    const error = categoriesError || productError;
+    if (categoriesLoading || productLoading || error) {
+        return <CatalogStatus error={error} />;
+    }
 
     if (!product) {
         notFound();
     }
 
-    const category = getCategoryById(product.categoryId);
+    const category = categories.find((cat) => cat.id === product.categoryId);
     const subcategory = category?.subcategories?.find((sub) => sub.id === product.subcategoryId);
 
     const handleAddToQuote = () => {
