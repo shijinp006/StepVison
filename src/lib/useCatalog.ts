@@ -10,6 +10,7 @@ import {
     fetchProducts,
     isCancelledRequest,
 } from './catalog';
+import { log } from 'console';
 
 // Loads every category once per page view.
 export function useCategories() {
@@ -64,6 +65,8 @@ export function useCatalogProducts(query: CatalogProductQuery | null) {
         error: state.error,
     };
 }
+
+
 
 // Loads one product. `product` is null when it does not exist.
 export function useCatalogProduct(id: string) {
