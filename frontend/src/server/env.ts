@@ -1,5 +1,4 @@
 import 'server-only';
-import path from 'node:path';
 
 const REQUIRED = ['MONGODB_URI', 'ADMIN_EMAIL', 'ADMIN_PASSWORD', 'JWT_SECRET'];
 
@@ -26,6 +25,4 @@ export const env = {
     accessTokenTtlMinutes: Number(process.env.ACCESS_TOKEN_TTL_MINUTES) || 15,
     // How long a login (refresh token) lasts before the admin must sign in again.
     sessionTtlHours: Number(process.env.SESSION_TTL_HOURS) || 24,
-    // Uploaded product images live here (relative to the app folder by default).
-    uploadsDir: path.resolve(process.env.UPLOADS_DIR || 'uploads'),
 };

@@ -6,7 +6,7 @@ import { Button } from '@/components/Button';
 import { AdminCategoryOption, AdminProduct } from '@/lib/adminApi';
 import { SelectMenu } from './SelectMenu';
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 interface ProductFormModalProps {
@@ -54,7 +54,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, cat
             return;
         }
         if (file.size > MAX_IMAGE_BYTES) {
-            setError('Image must be 5 MB or smaller');
+            setError('Image must be 4 MB or smaller');
             return;
         }
         setError('');
@@ -146,7 +146,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, cat
                                     <ImagePlus className="w-10 h-10 mb-2 text-primary-500" />
                                     <span className="font-medium text-neutral-700">Click to upload</span>
                                     <span className="text-sm">or drag and drop</span>
-                                    <span className="text-xs mt-2">JPG, PNG, WEBP or GIF, up to 5 MB</span>
+                                    <span className="text-xs mt-2">JPG, PNG, WEBP or GIF, up to 4 MB</span>
                                 </span>
                             )}
                         </button>

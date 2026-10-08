@@ -14,7 +14,7 @@ const isFile = (value: unknown): value is File =>
 const image = z
     .custom<File>((value) => isFile(value) && value.size > 0, 'Product image is required')
     .refine((file) => imageTypes.includes(file.type), 'Only JPG, PNG, WEBP or GIF images are allowed')
-    .refine((file) => file.size <= imageMaxBytes, 'Image must be 5 MB or smaller');
+    .refine((file) => file.size <= imageMaxBytes, 'Image must be 4 MB or smaller');
 
 // An empty subcategory clears it. The service checks that both ids exist.
 const productFields = z.object({

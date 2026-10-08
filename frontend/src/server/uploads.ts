@@ -1,15 +1,16 @@
 import 'server-only';
 import crypto from 'node:crypto';
-import fs from 'node:fs/promises';
 import path from 'node:path';
+import mongoose from 'mongoose';
 import sharp from 'sharp';
-import { env } from './env';
+import { connectDB } from './db';
 import { HttpError } from './errors';
 
-// Product images are stored as WebP files in <uploadsDir>/products and served
-// by app/uploads/products/[filename]/route.ts at /uploads/products/<file>.
+// Product images are stored as WebP files in MongoDB (GridFS), not on disk:
+// Vercel's filesystem is read-only. They are served by
+// app/uploads/products/[filename]/route.ts at /uploads/products/<file>.
 
-const PRODUCT_IMAGES_DIR = path.join(env.uploadsDir, 'products');
+const BUCKET_NAME = 'productImages';
 const WEBP_QUALITY = 80;
 const SAFE_FILENAME = /^[\w.-]+$/;
 
@@ -21,13 +22,16 @@ const CONTENT_TYPES: Record<string, string> = {
     '.gif': 'image/gif',
 };
 
-// sharp's cache keeps source files open, which stops them being deleted on
-// Windows. Each image is only processed once anyway.
-sharp.cache(false);
-
 export interface StoredImage {
     filename: string;
     url: string;
+}
+
+// Only valid after connectDB() has resolved.
+function imageBucket() {
+    const db = mongoose.connection.db;
+    if (!db) throw new Error('Not connected to MongoDB');
+    return new mongoose.mongo.GridFSBucket(db, { bucketName: BUCKET_NAME });
 }
 
 // Converts the upload to WebP and saves it under a random name (never the
@@ -37,20 +41,19 @@ export async function saveProductImage(file: File): Promise<StoredImage> {
     const input = Buffer.from(await file.arrayBuffer());
     const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}.webp`;
 
-    // Created on first upload rather than at startup: on a read-only
-    // filesystem (Vercel) only uploads should fail, not the whole site.
-    await fs.mkdir(PRODUCT_IMAGES_DIR, { recursive: true });
-
+    let webp: Buffer;
     try {
-        await sharp(input, { animated: true })
-            .rotate()
-            .webp({ quality: WEBP_QUALITY })
-            .toFile(path.join(PRODUCT_IMAGES_DIR, filename));
+        webp = await sharp(input, { animated: true }).rotate().webp({ quality: WEBP_QUALITY }).toBuffer();
     } catch {
         throw new HttpError(400, 'The image could not be read. Try a different file', {
             image: 'The image could not be read',
         });
     }
+
+    await connectDB();
+    await new Promise<void>((resolve, reject) => {
+        imageBucket().openUploadStream(filename).on('finish', resolve).on('error', reject).end(webp);
+    });
 
     return { filename, url: `/uploads/products/${filename}` };
 }
@@ -59,10 +62,13 @@ export async function saveProductImage(file: File): Promise<StoredImage> {
 export function deleteProductImage(filename?: string | null) {
     if (!filename) return;
 
-    const filePath = path.join(PRODUCT_IMAGES_DIR, path.basename(filename));
-    fs.unlink(filePath).catch((err: NodeJS.ErrnoException) => {
-        if (err.code !== 'ENOENT') console.error(`Could not delete image ${filePath}:`, err.message);
-    });
+    const remove = async () => {
+        await connectDB();
+        const bucket = imageBucket();
+        const files = await bucket.find({ filename: path.basename(filename) }, { projection: { _id: 1 } }).toArray();
+        await Promise.all(files.map((file) => bucket.delete(file._id)));
+    };
+    remove().catch((err: Error) => console.error(`Could not delete image ${filename}:`, err.message));
 }
 
 // The stored image and its content type, or null if there is no such file.
@@ -70,10 +76,12 @@ export async function readProductImage(filename: string) {
     const contentType = CONTENT_TYPES[path.extname(filename).toLowerCase()];
     if (!SAFE_FILENAME.test(filename) || !contentType) return null;
 
-    try {
-        const data = await fs.readFile(path.join(PRODUCT_IMAGES_DIR, filename));
-        return { data, contentType };
-    } catch {
-        return null;
-    }
+    await connectDB();
+    const bucket = imageBucket();
+    const [file] = await bucket.find({ filename }).limit(1).toArray();
+    if (!file) return null;
+
+    const chunks: Buffer[] = [];
+    for await (const chunk of bucket.openDownloadStream(file._id)) chunks.push(chunk as Buffer);
+    return { data: Buffer.concat(chunks), contentType };
 }
