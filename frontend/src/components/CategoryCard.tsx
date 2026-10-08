@@ -35,6 +35,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
                     src={getCategoryBannerImage(category.slug)}
                     alt={category.name}
                     fill
+                    loading="lazy"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -52,17 +53,12 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
                             {category.description}
                         </p>
                     )}
-                    {category.subcategories && category.subcategories.length > 0 && (
-                        <div className="flex items-center justify-between">
-                            <p className="text-xs md:text-sm text-white/80">
-                                {category.subcategories.length} subcategories
-                            </p>
-                            <div className="flex items-center text-white font-medium text-sm md:text-base group-hover:text-primary-300 transition-colors">
-                                Explore
-                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1 group-hover:translate-x-2 transition-transform" />
-                            </div>
+                    <div className="flex items-center justify-end">
+                        <div className="flex items-center text-white font-medium text-sm md:text-base group-hover:text-primary-300 transition-colors">
+                            Explore
+                            <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1 group-hover:translate-x-2 transition-transform" />
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </Link>
