@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Lock, Mail, Eye, EyeOff, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/Button';
-import { adminApi, AdminSessionInfo } from '@/lib/adminApi';
+import { adminApi, type AdminSessionInfo } from '@/lib/adminApi';
 
 interface AdminLoginProps {
     onLoggedIn: (session: AdminSessionInfo) => void;

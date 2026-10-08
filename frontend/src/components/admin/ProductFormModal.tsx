@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { X, ImagePlus, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { AdminCategoryOption, AdminProduct } from '@/lib/adminApi';
+import { SelectMenu } from './SelectMenu';
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -21,8 +22,6 @@ const inputClass =
 export const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, categories, onSubmit, onClose }) => {
     const isEdit = product !== null;
     const [name, setName] = useState(product?.name ?? '');
-    const [price, setPrice] = useState(product ? String(product.price) : '');
-    const [quantity, setQuantity] = useState(product ? String(product.quantity) : '');
     const [category, setCategory] = useState(product?.category ?? '');
     const [subcategory, setSubcategory] = useState(product?.subcategory ?? '');
     const subcategories = categories.find((c) => c.id === category)?.subcategories ?? [];
@@ -67,20 +66,12 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, cat
         e.preventDefault();
         setError('');
 
-        const priceValue = Number(price);
-        const quantityValue = Number(quantity);
         if (!name.trim()) return setError('Product name is required');
-        if (price === '' || Number.isNaN(priceValue) || priceValue < 0) return setError('Enter a valid price');
-        if (quantity === '' || !Number.isInteger(quantityValue) || quantityValue < 0) {
-            return setError('Quantity must be a whole number of 0 or more');
-        }
         if (!category) return setError('Category is required');
         if (!isEdit && !imageFile) return setError('Product image is required');
 
         const form = new FormData();
         form.append('name', name.trim());
-        form.append('price', String(priceValue));
-        form.append('quantity', String(quantityValue));
         form.append('category', category);
         form.append('subcategory', subcategory);
         if (imageFile) form.append('image', imageFile);
@@ -194,80 +185,32 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, cat
                             <label htmlFor="product-category" className="block text-sm font-medium text-neutral-700 mb-2">
                                 Category <span className="text-red-500">*</span>
                             </label>
-                            <select
+                            <SelectMenu
                                 id="product-category"
-                                required
                                 value={category}
-                                onChange={(e) => {
-                                    setCategory(e.target.value);
+                                onChange={(value) => {
+                                    setCategory(value);
                                     setSubcategory('');
                                 }}
-                                className={inputClass}
-                            >
-                                <option value="" disabled>
-                                    {categories.length ? 'Select a category' : 'No categories yet. Add one under Categories'}
-                                </option>
-                                {categories.map((c) => (
-                                    <option key={c.id} value={c.id}>
-                                        {c.name}
-                                    </option>
-                                ))}
-                            </select>
+                                options={categories.map((c) => ({ value: c.id, label: c.name }))}
+                                placeholder={categories.length ? 'Select a category' : 'No categories yet. Add one under Categories'}
+                            />
                         </div>
 
                         <div>
                             <label htmlFor="product-subcategory" className="block text-sm font-medium text-neutral-700 mb-2">
                                 Subcategory
                             </label>
-                            <select
+                            <SelectMenu
                                 id="product-subcategory"
                                 value={subcategory}
-                                onChange={(e) => setSubcategory(e.target.value)}
+                                onChange={setSubcategory}
                                 disabled={subcategories.length === 0}
-                                className={`${inputClass} disabled:bg-neutral-100 disabled:text-neutral-400`}
-                            >
-                                <option value="">{category ? 'None' : 'Select a category first'}</option>
-                                {subcategories.map((s) => (
-                                    <option key={s.id} value={s.id}>
-                                        {s.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label htmlFor="product-price" className="block text-sm font-medium text-neutral-700 mb-2">
-                                Price (AED) <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="product-price"
-                                type="number"
-                                required
-                                min="0"
-                                step="0.01"
-                                inputMode="decimal"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                className={inputClass}
-                                placeholder="0.00"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="product-quantity" className="block text-sm font-medium text-neutral-700 mb-2">
-                                Quantity <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                id="product-quantity"
-                                type="number"
-                                required
-                                min="0"
-                                step="1"
-                                inputMode="numeric"
-                                value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                                className={inputClass}
-                                placeholder="0"
+                                options={[
+                                    { value: '', label: 'None' },
+                                    ...subcategories.map((s) => ({ value: s.id, label: s.name })),
+                                ]}
+                                placeholder={category ? 'None' : 'Select a category first'}
                             />
                         </div>
 

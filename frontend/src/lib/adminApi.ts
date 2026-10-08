@@ -1,132 +1,34 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import type {
+    ActionResult,
+    AdminCategoryOption,
+    AdminSessionInfo,
+    CategoryListResponse,
+    ProductListResponse,
+} from '@/data/adminTypes';
+import { loginAction, logoutAction, refreshSessionAction } from '@/server/actions/auth';
+import {
+    createCategoryAction,
+    createSubcategoryAction,
+    deleteCategoryAction,
+    deleteSubcategoryAction,
+    updateCategoryAction,
+    updateSubcategoryAction,
+} from '@/server/actions/categories';
+import { createProductAction, deleteProductAction, updateProductAction } from '@/server/actions/products';
+import { ApiError, callAction, getJson } from './http';
 
-export interface AdminUser {
-    id: string;
-    email: string;
-    name: string;
-}
-
-export interface AdminSessionInfo {
-    admin: AdminUser;
-    deviceId: string;
-    expiresAt: string;
-}
-
-export interface AdminProduct {
-    _id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image: { filename?: string; url: string };
-    category: string; // AdminCategory id
-    subcategory?: string; // AdminSubcategory id
-    createdAt: string;
-    updatedAt: string;
-}
-
-// A category as listed for pickers and labels (every category, no counts).
-export interface AdminCategoryOption {
-    id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    subcategories: { id: string; name: string; slug: string }[];
-}
-
-export interface AdminSubcategory {
-    id: string;
-    name: string;
-    slug: string;
-    productCount: number;
-}
-
-// A category on the paginated Categories page, with product counts.
-export interface AdminCategory {
-    _id: string;
-    id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    productCount: number;
-    subcategories: AdminSubcategory[];
-}
-
-export interface Pagination {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-}
-
-export interface ProductStats {
-    count: number;
-    totalQuantity: number;
-    inventoryValue: number;
-    lowStock: number;
-}
-
-export interface ProductListResponse {
-    products: AdminProduct[];
-    pagination: Pagination;
-    stats: ProductStats;
-}
-
-export interface CategoryListResponse {
-    categories: AdminCategory[];
-    pagination: Pagination;
-}
-
-export class ApiError extends Error {
-    constructor(public status: number, message: string) {
-        super(message);
-    }
-}
-
-// Thrown when the caller aborted the request (e.g. a newer search replaced
-// it). Callers should ignore it rather than show an error.
-export class RequestCancelledError extends Error {
-    constructor() {
-        super('Request cancelled');
-    }
-}
-
-const DEFAULT_TIMEOUT_MS = 15_000;
-const UPLOAD_TIMEOUT_MS = 60_000; // image uploads can be slow
-
-// Every request gives up after its timeout, sends the session cookies and
-// can be aborted early through `signal`.
-const http = axios.create({
-    baseURL: '/api/admin',
-    withCredentials: true,
-    timeout: DEFAULT_TIMEOUT_MS,
-});
-
-// Turns every failure into an ApiError with a message the UI can show, or a
-// RequestCancelledError when the caller aborted it.
-function toApiError(error: unknown): Error {
-    if (axios.isCancel(error)) return new RequestCancelledError();
-    if (!axios.isAxiosError(error)) return new ApiError(0, 'Request failed');
-
-    if (error.code === AxiosError.ECONNABORTED || error.code === AxiosError.ETIMEDOUT) {
-        return new ApiError(0, 'The server took too long to respond. Please try again.');
-    }
-    if (!error.response) {
-        return new ApiError(0, 'Cannot reach the server. Is the backend running?');
-    }
-
-    const { status, data } = error.response as { status: number; data?: { message?: string } };
-    const fallback = status >= 500 ? 'Server error. Is the backend running?' : 'Request failed';
-    return new ApiError(status, data?.message || fallback);
-}
-
-http.interceptors.response.use(undefined, (error) => Promise.reject(toApiError(error)));
-
-const get = <T>(url: string, config?: AxiosRequestConfig) => http.get<T>(url, config).then((res) => res.data);
-const post = <T>(url: string, body?: unknown, config?: AxiosRequestConfig) =>
-    http.post<T>(url, body, config).then((res) => res.data);
-const put = <T>(url: string, body?: unknown, config?: AxiosRequestConfig) =>
-    http.put<T>(url, body, config).then((res) => res.data);
-const del = <T>(url: string) => http.delete<T>(url).then((res) => res.data);
+export type {
+    AdminCategory,
+    AdminCategoryOption,
+    AdminProduct,
+    AdminSessionInfo,
+    AdminSubcategory,
+    AdminUser,
+    CategoryListResponse,
+    ProductListResponse,
+    ProductStats,
+} from '@/data/adminTypes';
+export { ApiError, RequestCancelledError } from './http';
 
 export interface ProductListParams {
     search?: string;
@@ -136,54 +38,71 @@ export interface ProductListParams {
     limit?: number;
 }
 
+// Every request that finds the access token expired at the same moment
+// waits for this one refresh, instead of each starting its own.
+let refreshInFlight: Promise<unknown> | null = null;
+
+function refreshTokens() {
+    refreshInFlight ??= callAction(refreshSessionAction()).finally(() => {
+        refreshInFlight = null;
+    });
+    return refreshInFlight;
+}
+
+// Runs an admin request. A 401 means the access token has expired: the
+// tokens are refreshed and the request is sent once more. If the refresh
+// itself fails with a 401, the login has really ended.
+async function withRefresh<T>(request: () => Promise<T>): Promise<T> {
+    try {
+        return await request();
+    } catch (err) {
+        if (!(err instanceof ApiError && err.status === 401)) {
+            throw err;
+        }
+        await refreshTokens();
+        return request();
+    }
+}
+
+const adminGet = <T>(...args: Parameters<typeof getJson>) => withRefresh(() => getJson<T>(...args));
+
+const adminAction = <T>(action: () => Promise<ActionResult<T>>) => withRefresh(() => callAction(action()));
+
+// Everything the admin panel does. Reads go through the /api/admin routes
+// (GET, cancellable); changes are server actions. Both throw ApiError, and a
+// 401 means the login has ended (an expired access token is refreshed first).
 export const adminApi = {
-    login: (email: string, password: string) => post<AdminSessionInfo>('/auth/login', { email, password }),
+    login: (email: string, password: string) => callAction<AdminSessionInfo>(loginAction({ email, password })),
 
-    logout: () => post<{ message: string }>('/auth/logout'),
+    logout: () => callAction(logoutAction()),
 
-    me: () => get<AdminSessionInfo>('/auth/me'),
+    listProducts: (params: ProductListParams, signal?: AbortSignal) =>
+        adminGet<ProductListResponse>('/api/admin/products', { ...params }, signal),
 
-    // Search and filters run on the server; empty values are left out.
-    listProducts: ({ search, category, subcategory, page, limit }: ProductListParams, signal?: AbortSignal) =>
-        get<ProductListResponse>('/products/list-products', {
-            params: {
-                search: search || undefined,
-                category: category || undefined,
-                subcategory: subcategory || undefined,
-                page,
-                limit,
-            },
-            signal,
-        }),
+    // FormData fields: name, category, subcategory, image (file)
+    createProduct: (form: FormData) => adminAction(() => createProductAction(form)),
 
-    // FormData fields: name, price, quantity, category, subcategory, image (file)
-    createProduct: (form: FormData) =>
-        post<{ product: AdminProduct }>('/products/add-product', form, { timeout: UPLOAD_TIMEOUT_MS }),
+    updateProduct: (id: string, form: FormData) => adminAction(() => updateProductAction(id, form)),
 
-    updateProduct: (id: string, form: FormData) =>
-        put<{ product: AdminProduct }>(`/products/update-product/${id}`, form, { timeout: UPLOAD_TIMEOUT_MS }),
-
-    deleteProduct: (id: string) => del<{ message: string; id: string }>(`/products/delete-product/${id}`),
+    deleteProduct: (id: string) => adminAction(() => deleteProductAction(id)),
 
     listCategories: (params: { page: number; limit: number }, signal?: AbortSignal) =>
-        get<CategoryListResponse>('/categories', { params, signal }),
+        adminGet<CategoryListResponse>('/api/admin/categories', params, signal),
 
-    listAllCategories: () => get<{ categories: AdminCategoryOption[] }>('/categories/all'),
+    listAllCategories: () => adminGet<{ categories: AdminCategoryOption[] }>('/api/admin/categories/all'),
 
-    createCategory: (body: { name: string; description?: string }) =>
-        post<{ category: AdminCategory }>('/categories', body),
+    createCategory: (body: { name: string; description?: string }) => adminAction(() => createCategoryAction(body)),
 
-    createSubcategory: (categoryId: string, name: string) =>
-        post<{ subcategory: AdminSubcategory }>(`/categories/${categoryId}/subcategories`, { name }),
+    createSubcategory: (categoryId: string, name: string) => adminAction(() => createSubcategoryAction(categoryId, name)),
 
     updateCategory: (categoryId: string, body: { name: string; description?: string }) =>
-        put<{ category: AdminCategory }>(`/categories/${categoryId}`, body),
+        adminAction(() => updateCategoryAction(categoryId, body)),
 
     updateSubcategory: (categoryId: string, subcategoryId: string, name: string) =>
-        put<{ subcategory: AdminSubcategory }>(`/categories/${categoryId}/subcategories/${subcategoryId}`, { name }),
+        adminAction(() => updateSubcategoryAction(categoryId, subcategoryId, name)),
 
-    deleteCategory: (categoryId: string) => del<{ message: string; id: string }>(`/categories/${categoryId}`),
+    deleteCategory: (categoryId: string) => adminAction(() => deleteCategoryAction(categoryId)),
 
     deleteSubcategory: (categoryId: string, subcategoryId: string) =>
-        del<{ message: string; id: string }>(`/categories/${categoryId}/subcategories/${subcategoryId}`),
+        adminAction(() => deleteSubcategoryAction(categoryId, subcategoryId)),
 };

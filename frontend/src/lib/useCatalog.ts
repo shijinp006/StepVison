@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Category, Product } from '@/data/types';
+import { CatalogProductList, Category, Product } from '@/data/types';
 import {
-    CatalogProductList,
     CatalogProductQuery,
     fetchCategories,
     fetchProduct,
@@ -33,7 +32,7 @@ export function useCategories() {
 }
 
 // Loads one page of products matching `query`; search and filters run on the
-// backend. Pass null to wait (e.g. until the category is known). The last
+// server. Pass null to wait (e.g. until the category is known). The last
 // results stay on screen while a newer query loads, and a newer query aborts
 // the one in flight so stale results never replace newer ones.
 export function useCatalogProducts(query: CatalogProductQuery | null) {
@@ -64,8 +63,6 @@ export function useCatalogProducts(query: CatalogProductQuery | null) {
         error: state.error,
     };
 }
-
-
 
 // Loads one product. `product` is null when it does not exist.
 export function useCatalogProduct(id: string) {

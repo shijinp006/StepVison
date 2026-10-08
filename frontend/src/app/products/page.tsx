@@ -19,7 +19,7 @@ export default function ProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-    // Search, filters and pagination all run on the backend; the search
+    // Search, filters and pagination all run on the server; the search
     // waits until typing pauses.
     const search = useDebouncedValue(searchQuery.trim(), SEARCH_DEBOUNCE_MS);
     const { categories, error: categoriesError } = useCategories();

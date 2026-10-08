@@ -17,7 +17,7 @@ export default function EngineeringSolutionsPage() {
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
-    // The backend filters by category and subcategory and pages the results;
+    // The server filters by category and subcategory and pages the results;
     // it waits until the category is known.
     const { products, pagination, error: productsError } = useCatalogProducts(
         category

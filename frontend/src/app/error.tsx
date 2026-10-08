@@ -4,8 +4,8 @@ import { startTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// Shown instead of a page that failed to render, usually because the catalog
-// backend could not be reached. Header and footer from the layout stay.
+// Shown instead of a page that failed to render, usually because the
+// database could not be reached. Header and footer from the layout stay.
 export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
     const router = useRouter();
 

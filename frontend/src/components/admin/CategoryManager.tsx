@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Folder, FolderPlus, ListPlus, Loader2, AlertTriangle, Pencil, Tag, Trash2, Tags } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, Folder, FolderPlus, ListPlus, Loader2, AlertTriangle, Pencil, Tag, Trash2, Tags } from 'lucide-react';
 import { Button } from '@/components/Button';
 import { AdminPageHeading } from './AdminPageHeading';
 import { CategoryFormModal, CategoryFormValues } from './CategoryFormModal';
@@ -58,6 +58,17 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
     const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
     const [deleting, setDeleting] = useState(false);
 
+    // Categories whose subcategory list is open.
+    const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+    const toggleExpanded = (categoryId: string) =>
+        setExpanded((prev) => {
+            const next = new Set(prev);
+            if (next.has(categoryId)) next.delete(categoryId);
+            else next.add(categoryId);
+            return next;
+        });
+
     // A newer load aborts the one in flight, so a stale page never replaces a newer one.
     const pageRequest = useRef<AbortController | null>(null);
 
@@ -113,6 +124,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                 addToast(`Category "${name}" added`, 'success');
             } else if (form.type === 'add-subcategory') {
                 await adminApi.createSubcategory(parentId, name);
+                setExpanded((prev) => new Set(prev).add(parentId)); // show the new subcategory
                 addToast(`Subcategory "${name}" added`, 'success');
             } else if (form.type === 'edit-category') {
                 await adminApi.updateCategory(form.category.id, { name, description: description || undefined });
@@ -185,8 +197,8 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                 }
             />
 
-            {/* Category list: fills the rest of the window and scrolls inside. */}
-            <div className="bg-white rounded-xl border border-neutral-200 shadow-sm flex-1 min-h-0 flex flex-col">
+            {/* Category list: on desktop it fills the rest of the window and scrolls inside. */}
+            <div className="bg-white rounded-xl border border-neutral-200 shadow-sm lg:flex-1 lg:min-h-0 flex flex-col">
                 <div className="p-4 border-b border-neutral-200 flex items-center justify-between gap-3">
                     <h2 className="text-lg font-bold text-neutral-900">All Categories</h2>
                     {pagination && (
@@ -222,12 +234,12 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                     </div>
                 ) : (
                     <ul
-                        className={`flex-1 min-h-0 overflow-auto scrollbar-thin divide-y divide-neutral-200 transition-opacity ${
+                        className={`lg:flex-1 lg:min-h-0 lg:overflow-auto scrollbar-thin divide-y divide-neutral-200 transition-opacity ${
                             loading ? 'opacity-60' : ''
                         }`}
                     >
                         {categories.map((category) => (
-                            <li key={category.id} className="p-5">
+                            <li key={category.id} className="p-4 sm:p-5">
                                 {/* Category */}
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-start gap-3 min-w-0">
@@ -244,9 +256,6 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                                                     {plural(category.productCount, 'product')}
                                                 </span>
                                             </div>
-                                            {category.description && (
-                                                <p className="text-base text-neutral-600 mt-1">{category.description}</p>
-                                            )}
                                         </div>
                                     </div>
                                     <div className="flex flex-shrink-0">
@@ -277,22 +286,44 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                                     </div>
                                 </div>
 
-                                {/* Its subcategories, indented under it with a connecting line */}
-                                <div className="mt-4 ml-5 pl-6 border-l-2 border-primary-200">
-                                    <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2">
-                                        Subcategories ({category.subcategories.length})
-                                    </p>
+                                {/* Its subcategories, hidden until "View subcategories" is pressed */}
+                                <div className="mt-3 sm:ml-14">
                                     {category.subcategories.length > 0 ? (
-                                        <div className="flex flex-wrap gap-2">
+                                        <button
+                                            onClick={() => toggleExpanded(category.id)}
+                                            aria-expanded={expanded.has(category.id)}
+                                            aria-controls={`subcategories-${category.id}`}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-sm font-medium text-primary-700 hover:bg-primary-100 transition-colors"
+                                        >
+                                            <Tags className="w-4 h-4" />
+                                            {expanded.has(category.id) ? 'Hide' : 'View'} subcategories
+                                            <ChevronDown
+                                                className={`w-4 h-4 transition-transform ${expanded.has(category.id) ? 'rotate-180' : ''}`}
+                                            />
+                                        </button>
+                                    ) : (
+                                        <p className="text-sm text-neutral-400">
+                                            No subcategories yet.{' '}
+                                            <button
+                                                onClick={() => openForm({ type: 'add-subcategory', parentId: category.id })}
+                                                className="font-medium text-primary-700 hover:underline"
+                                            >
+                                                Add one
+                                            </button>
+                                        </p>
+                                    )}
+
+                                    {expanded.has(category.id) && category.subcategories.length > 0 && (
+                                        <ul
+                                            id={`subcategories-${category.id}`}
+                                            className="mt-3 rounded-lg border border-neutral-200 divide-y divide-neutral-200 overflow-hidden"
+                                        >
                                             {category.subcategories.map((sub) => (
-                                                <span
-                                                    key={sub.id}
-                                                    className="inline-flex items-center gap-2 pl-3 pr-1 py-1.5 rounded-lg border border-neutral-200 bg-neutral-50 text-base text-neutral-800"
-                                                >
+                                                <li key={sub.id} className="flex items-center gap-3 pl-3 pr-1 py-1.5 bg-neutral-50 hover:bg-white transition-colors">
                                                     <Tag className="w-4 h-4 text-primary-600 flex-shrink-0" />
-                                                    {sub.name}
-                                                    <span className="text-sm text-neutral-500">{plural(sub.productCount, 'product')}</span>
-                                                    <span className="flex">
+                                                    <span className="flex-1 min-w-0 truncate text-base text-neutral-800">{sub.name}</span>
+                                                    <span className="text-sm text-neutral-500 whitespace-nowrap">{plural(sub.productCount, 'product')}</span>
+                                                    <span className="flex flex-shrink-0">
                                                         <button
                                                             onClick={() => openForm({ type: 'edit-subcategory', category, subcategory: sub })}
                                                             className={`${chipButton} hover:text-primary-700 hover:bg-primary-50`}
@@ -310,11 +341,9 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ allCategories,
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
                                                     </span>
-                                                </span>
+                                                </li>
                                             ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-base text-neutral-400">No subcategories yet</p>
+                                        </ul>
                                     )}
                                 </div>
                             </li>

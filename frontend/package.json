@@ -7,18 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "backend:dev": "npm --prefix backend run dev",
-    "backend:start": "npm --prefix backend start"
+    "typecheck": "tsc --noEmit",
+    "convert-images": "node --env-file-if-exists=.env.local scripts/convert-images-to-webp.mjs"
   },
   "dependencies": {
-    "axios": "^1.20.0",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.562.0",
+    "mongoose": "^9.11.1",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.5",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

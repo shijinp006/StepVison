@@ -16,7 +16,7 @@ export interface Category {
   subcategories?: Subcategory[];
 }
 
-// Active products as served by the backend's /api/catalog/products.
+// Active products as served by /api/catalog/products.
 export interface Product {
   id: string;
   name: string;
@@ -36,4 +36,16 @@ export interface CartItem {
   productCode: string;
   quantity: number;
   imageUrl: string;
+}
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface CatalogProductList {
+  products: Product[];
+  pagination: Pagination;
 }

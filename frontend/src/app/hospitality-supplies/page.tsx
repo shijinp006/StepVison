@@ -1,15 +1,15 @@
 import React from 'react';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { CategoryCard } from '@/components/CategoryCard';
-import { fetchCategories } from '@/lib/catalog';
+import { listCatalogCategories } from '@/server/services/catalog';
 
 // Catalog data changes from the admin panel, so render on each request
-// instead of once at build time (when the backend may not be reachable).
+// instead of once at build time (when the database may not be reachable).
 export const dynamic = 'force-dynamic';
 
 export default async function HospitalitySuppliesPage() {
     // Filter out Engineering Solutions as it has its own section
-    const categories = (await fetchCategories()).filter(cat => cat.slug !== 'engineering-solutions');
+    const categories = (await listCatalogCategories()).filter(cat => cat.slug !== 'engineering-solutions');
 
     return (
         <div className="min-h-screen bg-neutral-50">

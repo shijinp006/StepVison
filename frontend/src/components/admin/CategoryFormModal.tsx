@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, FolderPlus, ListPlus, Loader2, Pencil } from 'lucide-react';
 import { Button } from '@/components/Button';
+import { SelectMenu } from './SelectMenu';
 
 export interface CategoryFormValues {
     name: string;
@@ -87,21 +88,13 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
                         <label htmlFor="category-form-parent" className={labelClass}>
                             Parent Category <span className="text-red-500">*</span>
                         </label>
-                        <select
+                        <SelectMenu
                             id="category-form-parent"
                             value={parentId}
-                            onChange={(e) => setParentId(e.target.value)}
-                            className={inputClass}
-                        >
-                            <option value="" disabled>
-                                Select a category
-                            </option>
-                            {parents.map((parent) => (
-                                <option key={parent.id} value={parent.id}>
-                                    {parent.name}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={setParentId}
+                            options={parents.map((parent) => ({ value: parent.id, label: parent.name }))}
+                            placeholder="Select a category"
+                        />
                     </div>
                 )}
                 <div>

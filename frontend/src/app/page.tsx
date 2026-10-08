@@ -6,16 +6,16 @@ import { Button } from '@/components/Button';
 import { HeroSlider } from '@/components/HeroSlider';
 import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
-import { fetchCategories, fetchProducts } from '@/lib/catalog';
+import { listCatalogCategories, listCatalogProducts } from '@/server/services/catalog';
 
 // Catalog data changes from the admin panel, so render on each request
-// instead of once at build time (when the backend may not be reachable).
+// instead of once at build time (when the database may not be reachable).
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const [categories, { products: featuredProducts }] = await Promise.all([
-    fetchCategories(),
-    fetchProducts({ featured: true, limit: 8 }),
+    listCatalogCategories(),
+    listCatalogProducts({ page: 1, limit: 8, search: '', featured: true }),
   ]);
 
   return (

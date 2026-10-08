@@ -10,6 +10,28 @@ A Next.js 14 website for StepVision Hotel Supplies, featuring a comprehensive pr
 - **State Management**: Zustand (for quote cart)
 - **Icons**: Lucide React
 - **Font**: Inter (Google Fonts)
+- **Data**: MongoDB (Mongoose), validated with Zod
+- **Auth**: short-lived JWT access token + rotating refresh token (both httpOnly cookies) and a revocable session per device
+
+## 🔌 Server (no separate backend)
+
+Everything runs inside the Next.js app in `frontend/`. Copy `frontend/.env.local.example` to `frontend/.env.local` and fill it in.
+
+```
+src/server/
+├── env.ts, db.ts        # settings and the shared MongoDB connection
+├── models/              # Mongoose models (field limits live here)
+├── schemas/             # Zod input validation
+├── auth/                # JWT (token.ts) and login sessions (session.ts)
+├── services/            # business logic, used by routes, actions and pages
+├── actions/             # server actions: login/logout, add/edit/delete
+├── http.ts              # apiRoute/adminRoute and runAction/runAdminAction wrappers
+└── uploads.ts           # product images (saved as WebP in ./uploads)
+```
+
+- **Reads** are API routes (GET): `/api/catalog/*` (public), `/api/admin/*` (login required), `/api/health`.
+- **Changes** are server actions in `src/server/actions/`. Each one checks the login, then validates its input.
+- Server components (home page, `/admin`) call the services directly.
 
 ## 📋 Prerequisites
 
