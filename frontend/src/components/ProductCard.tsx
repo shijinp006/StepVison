@@ -36,8 +36,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const handleWhatsApp = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+        const message = `I'm interested in ${product.name}${product.code ? ` (${product.code})` : ''}`;
         window.open(
-            `https://wa.me/971568978100?text=I'm interested in ${product.name} (${product.code})`,
+            `https://wa.me/971568978100?text=${encodeURIComponent(message)}`,
             '_blank',
             'noopener,noreferrer'
         );

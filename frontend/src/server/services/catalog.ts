@@ -11,7 +11,9 @@ import { toCategoryOption } from './categories';
 // prices, stock or archived products.
 
 const PRODUCT_FIELDS = 'name code category subcategory brand shortDescription image isFeatured';
-const PRODUCT_ORDER = { createdAt: 1, _id: 1 } as const;
+// Newest first, so products just added in the admin panel appear on page one.
+// _id keeps a stable order for products created in the same instant.
+const PRODUCT_ORDER = { createdAt: -1, _id: 1 } as const;
 
 type CatalogProductRecord = Pick<
     ProductFields,
