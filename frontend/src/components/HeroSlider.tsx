@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from './Button';
+import { siteImage } from '@/lib/cloudinary';
 
 interface Slide {
     id: number;
@@ -20,7 +21,7 @@ interface Slide {
 const slides: Slide[] = [
     {
         id: 1,
-        image: '/images/hero-banner-main.png',
+        image: siteImage('hero-banner-main'),
         title: 'One stop solution for Hotel supplies and Engineering Products',
         description: '',
         ctaText: 'View Products',
@@ -30,7 +31,7 @@ const slides: Slide[] = [
     },
     {
         id: 2,
-        image: '/images/hero-slide-1.png',
+        image: siteImage('hero-slide-1'),
         title: 'Premium Hotel & Hospitality Supplies',
         description: 'From OS&E and FF&E to Engineering spares and maintenance products — trusted by hotels in Middle East and Africa',
         ctaText: 'View Catalogue',
@@ -40,7 +41,7 @@ const slides: Slide[] = [
     },
     {
         id: 3,
-        image: '/images/hero-slide-2.png',
+        image: siteImage('hero-slide-2'),
         title: 'Reliable Engineering Solutions',
         description: 'Comprehensive engineering supplies including HVAC, electrical, plumbing, and maintenance essentials.',
         ctaText: 'View Catalogue',
@@ -50,7 +51,7 @@ const slides: Slide[] = [
     },
     {
         id: 4,
-        image: '/images/hero-slide-3.png',
+        image: siteImage('hero-slide-3'),
         title: 'Elegant Tabletop & Dining',
         description: 'Curated dinnerware, glassware, and cutlery to elevate your guests\' dining experience.',
         ctaText: 'View Catalogue',
@@ -60,7 +61,7 @@ const slides: Slide[] = [
     },
     {
         id: 5,
-        image: '/images/hero-slide-4.png',
+        image: siteImage('hero-slide-4'),
         title: 'Custom & Project Solutions',
         description: 'Bespoke furniture, project services, and custom sourcing tailored to your hospitality needs.',
         ctaText: 'View Catalogue',
@@ -70,7 +71,7 @@ const slides: Slide[] = [
     },
     {
         id: 6,
-        image: '/images/hero-slide-5.png',
+        image: siteImage('hero-slide-5'),
         title: 'Professional Kitchen Equipment',
         description: 'Top-tier cookware and tools designed for professional chefs and busy commercial kitchens.',
         ctaText: 'View Catalogue',

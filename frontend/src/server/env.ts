@@ -1,6 +1,14 @@
 import 'server-only';
 
-const REQUIRED = ['MONGODB_URI', 'ADMIN_EMAIL', 'ADMIN_PASSWORD', 'JWT_SECRET'];
+const REQUIRED = [
+    'MONGODB_URI',
+    'ADMIN_EMAIL',
+    'ADMIN_PASSWORD',
+    'JWT_SECRET',
+    'NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET',
+];
 
 // Problems with the environment. They are reported by /api/health and
 // thrown on the first database call, instead of crashing the whole site.
@@ -25,4 +33,9 @@ export const env = {
     accessTokenTtlMinutes: Number(process.env.ACCESS_TOKEN_TTL_MINUTES) || 15,
     // How long a login (refresh token) lasts before the admin must sign in again.
     sessionTtlHours: Number(process.env.SESSION_TTL_HOURS) || 24,
+    cloudinary: {
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? '',
+        apiKey: process.env.CLOUDINARY_API_KEY ?? '',
+        apiSecret: process.env.CLOUDINARY_API_SECRET ?? '',
+    },
 };

@@ -19,8 +19,8 @@ const productSchema = new mongoose.Schema(
             trim: true,
             maxlength: [PRODUCT_LIMITS.nameLength, `Product name must be ${PRODUCT_LIMITS.nameLength} characters or fewer`],
         },
-        // filename is only set for images uploaded to this site; imported
-        // catalog products point at a public or external URL instead.
+        // filename is the Cloudinary public id (stepvision/hotel/products/...)
+        // and url its delivery URL. Without a filename, url is external.
         image: {
             filename: { type: String },
             url: { type: String, required: true },

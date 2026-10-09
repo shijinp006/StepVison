@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Package, Clock, Award, Users } from 'lucide-react';
 import { Button } from '@/components/Button';
+import { siteImage } from '@/lib/cloudinary';
 import { HeroSlider } from '@/components/HeroSlider';
 import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
@@ -79,7 +80,7 @@ export default async function HomePage() {
             </div>
             <div className="relative h-[300px] md:h-[350px] rounded-lg overflow-hidden shadow-xl">
               <Image
-                src="/images/intro-split-banner.png"
+                src={siteImage('intro-split-banner')}
                 alt="Hotel supplies and engineering tools showcase"
                 fill
                 className="object-cover"

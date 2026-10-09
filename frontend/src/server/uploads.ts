@@ -1,87 +1,64 @@
 import 'server-only';
-import crypto from 'node:crypto';
-import path from 'node:path';
-import mongoose from 'mongoose';
-import sharp from 'sharp';
-import { connectDB } from './db';
+import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary';
+import { CLOUDINARY_FOLDERS } from '@/lib/cloudinary';
+import { env } from './env';
 import { HttpError } from './errors';
 
-// Product images are stored as WebP files in MongoDB (GridFS), not on disk:
-// Vercel's filesystem is read-only. They are served by
-// app/uploads/products/[filename]/route.ts at /uploads/products/<file>.
+// Product images are stored in Cloudinary under stepvision/hotel/products.
+// The product keeps the Cloudinary public id as `filename` (used to delete
+// it later) and a delivery URL as `url`.
 
-const BUCKET_NAME = 'productImages';
-const WEBP_QUALITY = 80;
-const SAFE_FILENAME = /^[\w.-]+$/;
-
-const CONTENT_TYPES: Record<string, string> = {
-    '.webp': 'image/webp',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png',
-    '.gif': 'image/gif',
-};
+cloudinary.config({
+    cloud_name: env.cloudinary.cloudName,
+    api_key: env.cloudinary.apiKey,
+    api_secret: env.cloudinary.apiSecret,
+    secure: true,
+});
 
 export interface StoredImage {
     filename: string;
     url: string;
 }
 
-// Only valid after connectDB() has resolved.
-function imageBucket() {
-    const db = mongoose.connection.db;
-    if (!db) throw new Error('Not connected to MongoDB');
-    return new mongoose.mongo.GridFSBucket(db, { bucketName: BUCKET_NAME });
+// f_auto/q_auto serve WebP/AVIF at a sensible quality to browsers that
+// support it, so the original is uploaded as-is.
+function deliveryUrl({ public_id, version }: Pick<UploadApiResponse, 'public_id' | 'version'>) {
+    return cloudinary.url(public_id, { version, fetch_format: 'auto', quality: 'auto' });
 }
 
-// Converts the upload to WebP and saves it under a random name (never the
-// client-supplied one). Animated GIFs stay animated; photos are turned
-// upright using their EXIF data.
+// Uploads under a random name chosen by Cloudinary (never the client-supplied
+// one). Photos are turned upright using their EXIF data.
 export async function saveProductImage(file: File): Promise<StoredImage> {
     const input = Buffer.from(await file.arrayBuffer());
-    const filename = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}.webp`;
 
-    let webp: Buffer;
+    let result: UploadApiResponse;
     try {
-        webp = await sharp(input, { animated: true }).rotate().webp({ quality: WEBP_QUALITY }).toBuffer();
-    } catch {
-        throw new HttpError(400, 'The image could not be read. Try a different file', {
-            image: 'The image could not be read',
+        result = await new Promise<UploadApiResponse>((resolve, reject) => {
+            cloudinary.uploader
+                .upload_stream({ folder: CLOUDINARY_FOLDERS.products, resource_type: 'image' }, (err, res) =>
+                    err || !res ? reject(err ?? new Error('Empty Cloudinary response')) : resolve(res)
+                )
+                .end(input);
         });
+    } catch (err) {
+        const { http_code, message } = (err ?? {}) as { http_code?: number; message?: string };
+        if (http_code === 400) {
+            throw new HttpError(400, 'The image could not be read. Try a different file', {
+                image: 'The image could not be read',
+            });
+        }
+        console.error('Cloudinary upload failed:', message);
+        throw new HttpError(502, 'The image could not be uploaded. Please try again');
     }
 
-    await connectDB();
-    await new Promise<void>((resolve, reject) => {
-        imageBucket().openUploadStream(filename).on('finish', resolve).on('error', reject).end(webp);
-    });
-
-    return { filename, url: `/uploads/products/${filename}` };
+    return { filename: result.public_id, url: deliveryUrl(result) };
 }
 
 // Removes an uploaded image in the background. A missing file is fine.
-export function deleteProductImage(filename?: string | null) {
-    if (!filename) return;
+export function deleteProductImage(publicId?: string | null) {
+    if (!publicId) return;
 
-    const remove = async () => {
-        await connectDB();
-        const bucket = imageBucket();
-        const files = await bucket.find({ filename: path.basename(filename) }, { projection: { _id: 1 } }).toArray();
-        await Promise.all(files.map((file) => bucket.delete(file._id)));
-    };
-    remove().catch((err: Error) => console.error(`Could not delete image ${filename}:`, err.message));
-}
-
-// The stored image and its content type, or null if there is no such file.
-export async function readProductImage(filename: string) {
-    const contentType = CONTENT_TYPES[path.extname(filename).toLowerCase()];
-    if (!SAFE_FILENAME.test(filename) || !contentType) return null;
-
-    await connectDB();
-    const bucket = imageBucket();
-    const [file] = await bucket.find({ filename }).limit(1).toArray();
-    if (!file) return null;
-
-    const chunks: Buffer[] = [];
-    for await (const chunk of bucket.openDownloadStream(file._id)) chunks.push(chunk as Buffer);
-    return { data: Buffer.concat(chunks), contentType };
+    cloudinary.uploader
+        .destroy(publicId, { invalidate: true })
+        .catch((err: { message?: string }) => console.error(`Could not delete image ${publicId}:`, err.message));
 }

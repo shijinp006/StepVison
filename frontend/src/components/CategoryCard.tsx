@@ -3,28 +3,30 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Category } from '@/data/types';
+import { siteImage } from '@/lib/cloudinary';
 
 export interface CategoryCardProps {
     category: Category;
 }
 
-// Map category slugs to banner image filenames
-const getCategoryBannerImage = (categorySlug: string): string => {
-    const imageMap: Record<string, string> = {
-        'tabletop-dining': 'tabletop-dining.jpg',
-        'kitchen-catering': 'kitchen-catering.jpg',
-        'housekeeping-cleaning': 'housekeeping-cleaning.jpg',
-        'guest-room-essentials': 'guest-room-essentials.jpg',
-        'front-office-service': 'front-office-service.jpg',
-        'stationery': 'stationery.jpg',
-        'gift-items': 'gift-items.jpg',
-        'party-items': 'party-items.jpg',
-        'furniture': 'furniture.jpg',
-        'upholstery': 'upholstery.jpg',
-        'custom-project-solutions': 'custom-project-solutions.jpg',
-    };
-    return `/images/categories/${imageMap[categorySlug] || 'tabletop-dining.jpg'}`;
-};
+// Category slugs that have a banner image in Cloudinary
+// (stepvision/hotel/site/categories/<slug>).
+const CATEGORY_BANNERS = new Set([
+    'tabletop-dining',
+    'kitchen-catering',
+    'housekeeping-cleaning',
+    'guest-room-essentials',
+    'front-office-service',
+    'stationery',
+    'gift-items',
+    'party-items',
+    'furniture',
+    'upholstery',
+    'custom-project-solutions',
+]);
+
+const getCategoryBannerImage = (categorySlug: string): string =>
+    siteImage(`categories/${CATEGORY_BANNERS.has(categorySlug) ? categorySlug : 'tabletop-dining'}`);
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
     return (
