@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react';
 import { AdminLogin } from './AdminLogin';
 import { AdminDashboard } from './AdminDashboard';
 import type { AdminSessionInfo } from '@/data/adminTypes';
+console.log("jjj");
 
 interface AdminAppProps {
     initialSession: AdminSessionInfo | null; // null = not logged in
